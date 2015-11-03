@@ -20,7 +20,6 @@ var app = angular.module('starter', ['ionic', 'ionic.utils','angularMoment','sta
 
                     event.preventDefault();
                 }
-
             });
         };
     }).
@@ -45,6 +44,7 @@ var app = angular.module('starter', ['ionic', 'ionic.utils','angularMoment','sta
     }).config(function ($stateProvider, $locationProvider, $httpProvider, $urlRouterProvider) {
         // $httpProvider.defaults.useXDomain = true;
         $httpProvider.defaults.withCredentials = true;
+        //$httpProvider.defaults.headers["origin"]="127.0.0.1:12345";
         $httpProvider.defaults.headers.post['Content-Type'] = 'application/json; charset= utf-8';
         // delete $httpProvider.defaults.headers.common['X-Requested-With'];
     })

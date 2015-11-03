@@ -12,7 +12,7 @@
                         <input type="search" placeholder="查找" ng-enter="search()" ng-model="data.search_string">
                         <a on-touch="cancel()" class="button button-icon icon ion-ios-close-outline larger"></a>
                     </label>
-                    <a ng-click="beginCaptureAudio()"><i class="ion-mic-a" style="font-size: xx-large"></i></a>
+                    <a ng-click="beginCaptureAudio()" ng-if="ionic.Platform.isWebView==false"><i class="ion-mic-a" style="font-size: xx-large"></i></a>
         </div>
 
         <div class="list " ng-repeat="question in questions">

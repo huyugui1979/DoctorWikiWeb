@@ -33,37 +33,38 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
         //$scope.image_url = SERVER.url + "/images/" + $rootScope.user.image;
         //后台检查更新
         console.log("enter browserctrl");
-        $http.get(SERVER.url + '/versions').success(function (data) {
-            console.log("update ver is "+JSON.stringify(data));
-            var currentVersion = $localstorage.getObject('currentVersion');
-            console.log("current ver is "+JSON.stringify(currentVersion));
+        if(ionic.Platform.isWebView == false) {
+            $http.get(SERVER.url + '/versions').success(function (data) {
+                console.log("update ver is " + JSON.stringify(data));
+                var currentVersion = $localstorage.getObject('currentVersion');
+                console.log("current ver is " + JSON.stringify(currentVersion));
 
-            if(currentVersion == null  ){
-                console.log("currentVersion is null");
-                currentVersion = data;
-                $localstorage.setObject('currentVersion',currentVersion);
-            }else if(currentVersion.toString() != data.toString())
-            {
-                console.log("have currentViersion");
-                $ionicPopup.confirm({
-                    title:"通知",
-                    template:"软件有新的更新，是否前去更新"
-                }).then(function(res){
-                    if(res) {
-                        if(ionic.Platform.isIOS())
-                            cordova.InAppBrowser.open(data.iosUpdateUrl, '_system', 'location=yes');
-                        else
-                            cordova.InAppBrowser.open(data.androidUpdateUrl, '_system', 'location=yes');
-                    }
-                })
-            }
-        }).error(function (reason) {
-            //
-            console.log("error "+reason);
-            //
-        }).finally(function () {
+                if (currentVersion == null) {
+                    console.log("currentVersion is null");
+                    currentVersion = data;
+                    $localstorage.setObject('currentVersion', currentVersion);
+                } else if (currentVersion.toString() != data.toString()) {
+                    console.log("have currentViersion");
+                    $ionicPopup.confirm({
+                        title: "通知",
+                        template: "软件有新的更新，是否前去更新"
+                    }).then(function (res) {
+                        if (res) {
+                            if (ionic.Platform.isIOS())
+                                cordova.InAppBrowser.open(data.iosUpdateUrl, '_system', 'location=yes');
+                            else
+                                cordova.InAppBrowser.open(data.androidUpdateUrl, '_system', 'location=yes');
+                        }
+                    })
+                }
+            }).error(function (reason) {
+                //
+                console.log("error " + reason);
+                //
+            }).finally(function () {
 
-        });
+            });
+        }
         $scope.$on('$ionicView.enter', function () {
             //
             loadQuestion(true);
@@ -118,7 +119,6 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
                     $ionicLoading.hide();
                 });
             }
-
             //
         }
         //
@@ -167,16 +167,12 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
             loadQuestion(false);
         };
 
-        //
-        $scope.goDetail = function ($index) {
-            $state.go('app.commentDetail', {params: $index});
-        }
-        //
     })
     .controller('LoginCtrl', function ($scope, $http, $state, $rootScope, $ionicPopup,$cordovaFile, $cordovaFileTransfer, $localstorage, $ionicLoading, SERVER) {
         $scope.data = {phone: "", password: ""};
 
         $scope.$on('$ionicView.beforeEnter', function () {
+
             var user = $localstorage.getObject('user');
 
             console.log(JSON.stringify(user));
@@ -230,7 +226,9 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
                     //
                     $localstorage.setObject('user', data[0]);
                     $rootScope.user = data[0];
+                    if(ionic.Platform.isWebView == false)
                     loadImage();
+                    $state.go('app.browse');
                 }
             }).error(function (reason) {
                 //
@@ -239,10 +237,10 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
                     title: '错误',
                     template: reason
                 });
-                $ionicLoading.hide();
+
                 //
             }).finally(function () {
-
+                $ionicLoading.hide();
             });
 
         }
@@ -454,39 +452,42 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
         //
 
 
-        var access_token = '';
+        if(ionic.Platform.isWebView == false) {
+            var access_token = '';
 
-        $http.get(SERVER.url + '/getkey').success(function (data) {
-            console.log("get keyg:"+data.access_token);
-            access_token = data.access_token;
+            $http.get(SERVER.url + '/getkey').success(function (data) {
+                console.log("get keyg:" + data.access_token);
+                access_token = data.access_token;
 
-        }).error(function (reason) {
+            }).error(function (reason) {
+                //
+                console.log("get keyg: error " + reason);
+                //
+            }).finally(function () {
+                // Stop the ion-refresher from spinning
+            });
             //
-            console.log("get keyg: error "+reason);
-            //
-        }).finally(function () {
-            // Stop the ion-refresher from spinning
-        });
-        //
-        var name = null, mediaSrc = null;
-        if ($cordovaDevice.getPlatform() == "Android") {
-            name = "amr";
-            mediaSrc = cordova.file.externalDataDirectory + "test." + name;
+
+            var name = null, mediaSrc = null;
+            if ($cordovaDevice.getPlatform() == "Android") {
+                name = "amr";
+                mediaSrc = cordova.file.externalDataDirectory + "test." + name;
+            }
+            else {
+                name = "wav";
+                mediaSrc = "test." + name;
+                //mediaSrc = mediaSrc.fullPath.indexOf('file://') > -1 ? mediaSrc.fullPath : "file://" + mediaSrc.fullPath;
+            }
+
+
+            var mediaSource = new NewMedia(mediaSrc, function () {
+
+            }, function () {
+
+            }, function () {
+
+            });
         }
-        else {
-            name = "wav";
-            mediaSrc = "test." + name;
-            //mediaSrc = mediaSrc.fullPath.indexOf('file://') > -1 ? mediaSrc.fullPath : "file://" + mediaSrc.fullPath;
-        }
-
-
-        var mediaSource = new NewMedia(mediaSrc, function () {
-
-        }, function () {
-
-        }, function () {
-
-        });
 //
         $scope.stopCaptureAudio = function () {
 
@@ -994,13 +995,28 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
     })
     .controller('PersonalCtrl', function ($scope, $rootScope, $state, $http, $ionicHistory, $ionicLoading, $localstorage, SERVER, $cordovaFile, $cordovaFileTransfer) {
         //
-        $rootScope.userImageUrl = cordova.file.dataDirectory + $rootScope.user.image;
+        if(ionic.Platform.isWebView == false)
+            $rootScope.userImageUrl = cordova.file.dataDirectory + $rootScope.user.image;
+        else
+            $rootScope.userImageUrl = "/images/"+$rootScope.user.image;
         $scope.logout = function () {
             //
             $rootScope.user = null;
             $localstorage.setObject('user', null);
             $state.go('login')
             //
+        }
+        $scope.update = function () {
+            //
+            $http.put(SERVER.url + '/doctors', $rootScope.user).success(function (data) {
+
+            }).error(function (reason) {
+                //
+                //
+            }).finally(function () {
+                // Stop the ion-refresher from spinning
+
+            });
         }
         $scope.changePassword = function ($scope, $http) {
             //
@@ -1010,41 +1026,58 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
         }
         $scope.changeImage = function () {
             //
-            navigator.camera.getPicture(function (imageData) {
-                console.log(imageData);
-                $rootScope.userImageUrl = imageData;
-                var fileURI = imageData;
-                var options = new FileUploadOptions();
-                options.fileKey = "file";
-                options.fileName = $rootScope.user.phone + "_" + Date.now() + '.png';
-                options.mimeType = "image/png";
-
-                console.log($rootScope.user.image);
-                var ft = new FileTransfer();
-                $ionicLoading.show();
-                ft.upload(fileURI, encodeURI(SERVER.url + "/portrait"), function (result) {
+            if (ionic.Platform.isWebView == false) {
+                navigator.camera.getPicture(function (imageData) {
+                    console.log(imageData);
+                    //var idx =  imageData.lastIndexOf("/")+1;
                     //
-                    $rootScope.user.image = options.fileName;
-                    $scope.update();
+                    //var filename = filepath.slice(idx);
+                    //var path = imageData.substring(0,idx);
+                    //alert(filename);
+                    //alert(path);
+                    //$cordovaFile.copyFile(path,filename,cordova.file.dataDirectory, $rootScope.user.phone + "_" + Date.now() + '.png');
+                    //$rootScope.userImageUrl = imageData;
+
+                    var fileURI = imageData;
+                    var options = new FileUploadOptions();
+                    options.fileKey = "file";
+                    options.fileName = $rootScope.user.phone + "_" + Date.now() + '.png';
+                    options.mimeType = "image/png";
+
+                    console.log($rootScope.user.image);
+                    var ft = new FileTransfer();
+                    $ionicLoading.show();
+                    ft.upload(fileURI, encodeURI(SERVER.url + "/portrait"), function (result) {
+                        //
+                        //alert(options.fileName);
+                        $rootScope.user.image = options.fileName;
+                        // console.log(options.fileName);
+                        var targetPath = cordova.file.dataDirectory + $rootScope.user.image;
+                        $scope.update();
+                        $cordovaFileTransfer.download(SERVER.url + "/images/" + $rootScope.user.image, targetPath, {}, true)
+                            .then(function (result) {
+
+                                $rootScope.userImageUrl = targetPath;
+                                $ionicLoading.hide();
+                            });
+                    }, function (error) {
+                        console.log("image upload failed");
+
+                    }, options);
+                }, function (message) {
+                    console.log('Failed because: ' + message);
                     $ionicLoading.hide();
-                    //
-                }, function (error) {
-                    console.log("image upload failed");
-
-                }, options);
-            }, function (message) {
-                console.log('Failed because: ' + message);
-                $ionicLoading.hide();
-            }, {
-                destinationType: Camera.DestinationType.FILE_URI,
-                sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-                allowEdit: false,
-                quality: 50,
-                targetWidth: 100,
-                targetHeight: 100,
-                encodingType: Camera.EncodingType.PNG
-            });
-            //
+                }, {
+                    destinationType: Camera.DestinationType.FILE_URI,
+                    sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+                    allowEdit: false,
+                    quality: 50,
+                    targetWidth: 100,
+                    targetHeight: 100,
+                    encodingType: Camera.EncodingType.PNG
+                });
+                //
+            }
         }
         var myupdate = function () {
             //
