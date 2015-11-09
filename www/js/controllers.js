@@ -2,7 +2,7 @@
  * Created by jie on 15/7/2.
  */
 var registerData = {name: '',trueName:'', password: '', phone: '', vcode: '', selected: [], image: 'default.jpg', age: '23'};
-angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
+angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-control'])
 
     .controller('AppCtrl', function ($scope, $http, $rootScope, $ionicLoading, $ionicPopup, SERVER) {
         //
@@ -661,18 +661,57 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
     controller('HistoryCtrl', function ($scope, $state, $rootScope, $http, $ionicLoading, $timeout, $ionicPopup, QuestionService, SERVER) {
         //加载
 
+
         $scope.goDetail = function ($index) {
             $state.go('app.commentDetail', {'params': $index});
         }
         //
+        $scope.data = {search_string: ""};
+        $scope.cancel = function () {
+            console.log("cancel");
+            $scope.data.search_string = "";
+            $scope.doRefresh();
 
+        }
+        $scope.search = function () {
+            //
+            $ionicLoading.show({content: '正在查找'});
+            $http.get(SERVER.url + '/questions/search', {params: {"search": $scope.data.search_string,modifyType:modifyType,doctor: $rootScope.user._id}}).success(function (data) {
+                $scope.questions = data;
+                QuestionService.setData( $scope.questions);
+
+            }).error(function (reason) {
+                //
+                $ionicPopup.alert({
+                    title: '错误',
+                    template: reason
+                });
+                //
+            }).finally(function () {
+                // Stop the ion-refresher from spinning
+                $ionicLoading.hide();
+
+            });
+            //
+        }
         //
+        var modifyType=0;
+        $scope.selectCategory=function($index){
+            modifyType=$index;
+            if($scope.data.search_string !="")
+            $scope.search();
+            else
+            $scope.doRefresh();
+        }
+        //
+
+
         $scope.doRefresh = function () {
 
-
-            $http.get(SERVER.url + '/questions/doctor', {
+            $http.get(SERVER.url + '/questions/doctor/v2', {
                 params: {
-                    doctor: $rootScope.user._id
+                    doctor: $rootScope.user._id,
+                    modifyType:modifyType
                 }
             }).success(function (data) {
                 $scope.noMoreItemsAvailable=false;
@@ -687,8 +726,6 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
                 });
                 //
             }).finally(function () {
-
-
                     $scope.$broadcast('scroll.refreshComplete');
 
                 }
@@ -736,10 +773,11 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
             if ($scope.questions.length != 0) {
                 minAnswerTime = $scope.questions[$scope.questions.length - 1].answerTime;
             }
-            $http.get(SERVER.url + '/questions/doctor', {
+            $http.get(SERVER.url + '/questions/doctor/v2', {
                 params: {
                     doctor: $rootScope.user._id,
-                    minAnswerTime: minAnswerTime
+                    minAnswerTime: minAnswerTime,
+                    modifyType:modifyType
                 }
             }).success(function (data) {
                 if (data.length == 0) {
@@ -846,12 +884,12 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
 
     })
     //首页
-    .controller('QuestionDetailCtrl', function ($scope,$stateParams,SERVER,$http,QuestionService) {
+    .controller('QuestionDetailCtrl', function ($scope,$stateParams,$ionicLoading,SERVER,$http,QuestionService) {
         //
 
         var index = angular.fromJson($stateParams.params);
         $scope.question = QuestionService.getQuestionByIndex(index);
-
+        //
         var editor=null;
         $scope.myfocuse=function(){
             //setTimeout(function() { editor.focus(); }, 2000);
@@ -884,9 +922,10 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
             //editor.focus();
             // do what you want to do
         })
-        $scope.$on('$ionicView.beforeLeave', function () {
-           //
+        $scope.modify = function(){
+            $ionicLoading.show();
             $scope.question.answer = editor.getValue();
+            $scope.question.numberOfModify =  $scope.question.numberOfModify+1;
             $http.put(SERVER.url + '/questions', $scope.question).success(function (data) {
 
             }).error(function (reason) {
@@ -897,10 +936,10 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
                 });
                 //
             }).finally(function () {
-
+                $ionicLoading.hide();
             });
-            //
-        });
+        }
+
 
     })
     //注册
@@ -1108,7 +1147,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova'])
         $scope.questions=[];
         //
         $scope.doRefresh = function () {
-            console.log("do refresh");
+
             $http.get(SERVER.url + '/comments/doctor', {
                 params: {
                     doctor: $rootScope.user._id
