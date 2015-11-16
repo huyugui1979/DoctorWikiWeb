@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "moment": "~2.10.6",
-    "angular-moment": "~0.10.2"
+    "angular-moment": "~0.10.2",
+    "ionic-datepicker": "~0.9.0"
   }
 }

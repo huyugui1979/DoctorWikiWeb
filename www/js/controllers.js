@@ -1,8 +1,17 @@
 /**
  * Created by jie on 15/7/2.
  */
-var registerData = {name: '',trueName:'', password: '', phone: '', vcode: '', selected: [], image: 'default.jpg', age: '23'};
-angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-control'])
+var registerData = {
+    name: '',
+    trueName: '',
+    password: '',
+    phone: '',
+    vcode: '',
+    selected: [],
+    image: 'default.jpg',
+    age: '23'
+};
+angular.module('starter.controllers', ['ionic.utils', 'ionic-datepicker', 'ngCordova', 'ti-segmented-control'])
 
     .controller('AppCtrl', function ($scope, $http, $rootScope, $ionicLoading, $ionicPopup, SERVER) {
         //
@@ -23,7 +32,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
 
     })
     //浏览
-    .controller('BrowseCtrl', function ($scope,$localstorage, $state, $http, $ionicScrollDelegate,$rootScope, $timeout, $ionicLoading,QuestionService, $ionicModal, $ionicPopup, SERVER) {
+    .controller('BrowseCtrl', function ($scope, $localstorage, $state, $http, $ionicScrollDelegate, $rootScope, $timeout, $ionicLoading, QuestionService, $ionicModal, $ionicPopup, SERVER) {
         //
         //if(window.Alert != null)
         //{
@@ -32,8 +41,8 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
         //}
         //$scope.image_url = SERVER.url + "/images/" + $rootScope.user.image;
         //后台检查更新
-        console.log("enter browserctrl");
-        if(ionic.Platform.isWebView == false) {
+
+        if (ionic.Platform.isWebView == false) {
             $http.get(SERVER.url + '/versions').success(function (data) {
                 console.log("update ver is " + JSON.stringify(data));
                 var currentVersion = $localstorage.getObject('currentVersion');
@@ -122,13 +131,13 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             //
         }
         //
-        $scope.expand=function($index){
+        $scope.expand = function ($index) {
             $scope.questions[$index].shrink = !$scope.questions[$index].shrink;
             $ionicScrollDelegate.resize();
         }
         var loadQuestion = function (loading) {
 
-            if(loading)
+
             $ionicLoading.show();
             $http.get(SERVER.url + '/questions/unanswered', {
                 params: {
@@ -140,8 +149,8 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                 $scope.questions = data;
 
                 //$scope.shrink =[];
-                $scope.questions.forEach(function(e,i,a){
-                    e.shrink=true;
+                $scope.questions.forEach(function (e, i, a) {
+                    e.shrink = true;
                     //$scope.shrink.push(true);
                 })
 
@@ -156,10 +165,9 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                 //
             }).finally(function () {
                 // Stop the ion-refresher from spinning
-                if(loading)
-                    $ionicLoading.hide();
-                else
-                    $scope.$broadcast('scroll.refreshComplete');
+
+                $ionicLoading.hide();
+
 
             });
         }
@@ -168,7 +176,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
         };
 
     })
-    .controller('LoginCtrl', function ($scope, $http, $state, $rootScope, $ionicPopup,$cordovaFile, $cordovaFileTransfer, $localstorage, $ionicLoading, SERVER) {
+    .controller('LoginCtrl', function ($scope, $http, $state, $rootScope, $ionicPopup, $cordovaFile, $cordovaFileTransfer, $localstorage, $ionicLoading, SERVER) {
         $scope.data = {phone: "", password: ""};
 
         $scope.$on('$ionicView.beforeEnter', function () {
@@ -180,7 +188,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                 console.log("check user");
                 $ionicLoading.show();
                 $http.get(SERVER.url + '/doctors/id', {params: {_id: user._id}}).success(function (data) {
-                    console.log("login:"+data);
+                    console.log("login:" + data);
                     $rootScope.user = data;
 
                     $state.go('app.browse', {}, {reload: true});
@@ -189,7 +197,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                         title: '错误',
                         template: reason
                     });
-                }).finally(function(){
+                }).finally(function () {
                     $ionicLoading.hide();
                 });
 
@@ -202,7 +210,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                 .then(function (result) {
 
                     console.log(JSON.stringify($rootScope.user));
-                   // $ionicLoading.hide();
+                    // $ionicLoading.hide();
                     console.log("begin goto borwoser");
                     $state.go('app.browse');
                     console.log("goto borwoser")
@@ -226,8 +234,8 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                     //
                     $localstorage.setObject('user', data[0]);
                     $rootScope.user = data[0];
-                    if(ionic.Platform.isWebView == false)
-                    loadImage();
+                    if (ionic.Platform.isWebView == false)
+                        loadImage();
                     $state.go('app.browse');
                 }
             }).error(function (reason) {
@@ -249,7 +257,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
         }
     })
 
-    .controller('CommentDetailCtrl', function ($scope, $state,QuestionService, $ionicPopover, $stateParams, $timeout, $rootScope, $http, $ionicPopup, $ionicLoading, SERVER) {
+    .controller('CommentDetailCtrl', function ($scope, $state, QuestionService, $ionicPopover, $stateParams, $timeout, $rootScope, $http, $ionicPopup, $ionicLoading, SERVER) {
         //
         var index = angular.fromJson($stateParams.params);
         $scope.question = QuestionService.getQuestionByIndex(index);
@@ -358,14 +366,21 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
         $scope.data = {};
         $scope.sendComment = function () {
             //
-            if($scope.data.content ==null)
-            {
+            if ($scope.data.content == null) {
                 $ionicPopup.alert({
                     title: '错误',
                     template: '请输入评论内容'
                 });
                 return;
             }
+            if ($scope.question.doctor == $rootScope.user._id) {
+                $ionicPopup.alert({
+                    title: '错误',
+                    template: '你不能对自己的问题进行评论'
+                });
+                return;
+            }
+
             $scope.data.doctor = $rootScope.user;
             $scope.data.time = Date.now();
             $scope.data.question = $scope.question._id;
@@ -374,7 +389,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             $http.post(SERVER.url + '/comments', $scope.data).success(function (data) {
                 //
                 $scope.question.comments.push(data._id);
-                $scope.data.content=null;
+                $scope.data.content = null;
                 loadComments();
                 //
             }).error(function (reason) {
@@ -411,7 +426,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
     //
     .controller('MyCollectionCtrl', function ($state, $http, QuestionService, $rootScope, $timeout, $ionicLoading, $ionicPopup, $scope, SERVER) {
 
-        $scope.questions =[];
+        $scope.questions = [];
         $scope.goDetail = function ($index) {
 
             $state.go('app.commentDetail', {'params': $index});
@@ -421,7 +436,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             $http.get(SERVER.url + '/questions/ids', {params: {'ids[]': $rootScope.user.collections}}).success(function (data) {
                 //
                 $scope.questions = data;
-                QuestionService.setData(  $scope.questions );
+                QuestionService.setData($scope.questions);
 
                 //
             }).error(function (reason) {
@@ -450,134 +465,55 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
     .controller('AuditCtrl', function ($scope, $http, $rootScope, QuestionService, $state, $timeout, $ionicLoading, $ionicPopup, SERVER,
                                        $cordovaDevice, NewMedia, $cordovaFile, $cordovaCapture) {
         //
+        var weekDaysList = ['日', '一', '二', '三', '四', '五', '六'];
+        var monthList = ['一月', '二月', '三月', '四月', '五朋', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+        var startDate = null;
+        var endDate = null;
+        $scope.beginDatepickerObject = {
+            titleLabel: '选择时间',  //Optional
+            todayLabel: '今日',  //Optional
+            closeLabel: '关闭',  //Optional
+            setLabel: '设置',  //Optional
 
-
-        if(ionic.Platform.isWebView == false) {
-            var access_token = '';
-
-            $http.get(SERVER.url + '/getkey').success(function (data) {
-                console.log("get keyg:" + data.access_token);
-                access_token = data.access_token;
-
-            }).error(function (reason) {
+            weekDaysList: weekDaysList, //Optional
+            monthList: monthList, //Optional
+            callback: function (val) {  //Mandatory
                 //
-                console.log("get keyg: error " + reason);
+                startDate = val;
+                LoadQuestion();
                 //
-            }).finally(function () {
-                // Stop the ion-refresher from spinning
-            });
-            //
-
-            var name = null, mediaSrc = null;
-            if ($cordovaDevice.getPlatform() == "Android") {
-                name = "amr";
-                mediaSrc = cordova.file.externalDataDirectory + "test." + name;
-            }
-            else {
-                name = "wav";
-                mediaSrc = "test." + name;
-                //mediaSrc = mediaSrc.fullPath.indexOf('file://') > -1 ? mediaSrc.fullPath : "file://" + mediaSrc.fullPath;
-            }
-
-
-            var mediaSource = new NewMedia(mediaSrc, function () {
-
-            }, function () {
-
-            }, function () {
-
-            });
-        }
-//
-        $scope.stopCaptureAudio = function () {
-
-            $ionicLoading.hide();
-            mediaSource.stopRecord();
-            //
-            //var myfile;
-            if ($cordovaDevice.getPlatform() != "Android")
-                mediaSrc = cordova.file.tempDirectory + "test.wav";
-
-            window.resolveLocalFileSystemURL(mediaSrc, function (fileEntry) {
-
-                fileEntry.file(function (file) {
-
-                    var reader = new FileReader();
-
-                    reader.onloadend = function (e) {
-                        var temp = this.result.substring(this.result.indexOf(',') + 1);
-                        var uuid = $cordovaDevice.getUUID();
-                        var data = null;
-
-                        data = {
-                            format: name,
-                            rate: 8000,
-                            channel: 1,
-                            cuid: uuid,
-                            token: access_token,
-                            speech: temp,
-                            len: file.size
-                        }
-
-                        $ionicLoading.show();
-
-
-                        $http.post("http://vop.baidu.com/server_api", data).success(function (data) {
-                            //
-                            // this callback will be called asynchronously
-                            // when the response is available
-                            if (data.err_no == 0) {
-                               // $scope.data.search_string = data.result;
-                                var s = new String(data.result);
-                                $scope.data.search_string  = s.slice(0,-1);
-                                $scope.search();
-                            }
-                            else
-                                $ionicPopup.alert({
-                                    title: '错误',
-                                    template: '语音识别错误,错误原因为:' + data.err_msg
-                                });
-                        }).error(function (reason) {
-                            $ionicPopup.alert({
-                                title: '错误',
-                                template: '服务器错误' + reason
-                            });
-                        }).finally(function () {
-                            $ionicLoading.hide();
-                        });
-                    }
-                    reader.readAsDataURL(file);
-                });
-
-            }, function (e) {
-
-            });
+            },
+            dateFormat: 'yyyy-MM-dd', //Optional
+            closeOnSelect: false, //Optional
         };
+        $scope.endDatepickerObject = {
+            titleLabel: '选择时间',  //Optional
+            todayLabel: '今日',  //Optional
+            closeLabel: '关闭',  //Optional
+            setLabel: '设置',  //Optional
 
-        $scope.beginCaptureAudio = function () {
-            // Record audio
-            // $ionicLoading.show({ scope:$scope, template: ''<i class="ion-loading-c"></i><button class="button button-clear icon-left ion-close-circled" style="line-height: normal; min-height: 0; min-width: 0;" ng-click="cancelSearch()" ></button>'+toastStr});
-            console.log("begin capture");
-            $ionicLoading.show({
-                scope: $scope,
-                // The text to display in the loading indicator
-                template: '<i class="ion-loading-c"></i> <br><h1>请说出你要搜索的内容</h1><br><button ng-click="stopCaptureAudio()" class="button button-block">确定</button>',
-                animation: 'fade-in',
-                showBackdrop: true,
-                maxWidth: 100,
-                showDelay: 0
-            });
-            mediaSource.startRecord();
+            weekDaysList: weekDaysList, //Optional
+            monthList: monthList, //Optional
+            callback: function (val) {  //Mandatory
+                endDate = val;
+                LoadQuestion();
+            },
+            dateFormat: 'yyyy-MM-dd', //Optional
+            closeOnSelect: false, //Optional
         };
-
         $scope.goDetail = function ($index) {
             //$ionicViewSwitcher.nextTransition('none');
+
             $state.go('app.commentDetail', {'params': $index});
         }
+
         $scope.data = {search_string: ""};
         $scope.cancel = function () {
             console.log("cancel");
             $scope.data.search_string = "";
+            startDate = null;
+            endDate = null;
+            pageNo = 0;
             LoadQuestion();
         }
         $scope.search = function () {
@@ -585,7 +521,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             $ionicLoading.show({content: '正在查找'});
             $http.get(SERVER.url + '/questions/search', {params: {"search": $scope.data.search_string}}).success(function (data) {
                 $scope.questions = data;
-                QuestionService.setData( $scope.questions);
+                QuestionService.setData($scope.questions);
 
             }).error(function (reason) {
                 //
@@ -600,38 +536,19 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
 
             });
             //
-        }
-
-
+        }//
         var LoadQuestion = function () {
-
-            $http.get(SERVER.url + '/questions/answered', {params: {"categorys[]": $rootScope.user.selected}}).success(function (data) {
-
-                $scope.questions = data;
-                //
-                QuestionService.setData( $scope.questions);
-
-
-            }).error(function (reason) {
-                //
-                $ionicPopup.alert({
-                    title: '错误',
-                    template: reason
-                });
-                //
-            }).finally(function () {
-                // Stop the ion-refresher from spinning
-                $scope.$broadcast('scroll.refreshComplete');
-            });
-        }
-//
-        var LoadingQuestion = function () {
             $ionicLoading.show();
-            $http.get(SERVER.url + '/questions/answered', {params: {"categorys[]": $rootScope.user.selected}}).success(function (data) {
+            $http.get(SERVER.url + '/questions/answered', {
+                params: {
+                    "categorys[]": $rootScope.user.selected, startDate: startDate,
+                    endDate: endDate
+                }
+            }).success(function (data) {
 
                 $scope.questions = data;
                 //
-                QuestionService.setData( $scope.questions);
+                QuestionService.setData($scope.questions);
 
 
             }).error(function (reason) {
@@ -647,38 +564,89 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             });
         }
         $scope.doRefresh = function () {
+
             LoadQuestion();
         };
-        LoadingQuestion();
+        LoadQuestion();
         $scope.$on('$ionicView.enter', function () {
-           QuestionService.setData($scope.questions);
+            QuestionService.setData($scope.questions);
             // do what you want to do
         })
 
     }
-)
-    .
-    controller('HistoryCtrl', function ($scope, $state, $rootScope, $http, $ionicLoading, $timeout, $ionicPopup, QuestionService, SERVER) {
+).controller('ModifyCtrl', function ($scope, $state, $rootScope, $http, $ionicLoading, $timeout, $ionicPopup, QuestionService, SERVER) {
         //加载
 
+        var weekDaysList = ['日', '一', '二', '三', '四', '五', '六'];
+        var monthList = ['一月', '二月', '三月', '四月', '五朋', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+        var startDate = null;
+        var endDate = null;
+        $scope.beginDatepickerObject = {
+            titleLabel: '选择时间',  //Optional
+            todayLabel: '今日',  //Optional
+            closeLabel: '关闭',  //Optional
+            setLabel: '设置',  //Optional
 
+            weekDaysList: weekDaysList, //Optional
+            monthList: monthList, //Optional
+            callback: function (val) {  //Mandatory
+                //
+                startDate = val;
+                LoadQuestion();
+                //
+            },
+            dateFormat: 'yyyy-MM-dd', //Optional
+            closeOnSelect: false, //Optional
+        };
+        $scope.endDatepickerObject = {
+            titleLabel: '选择时间',  //Optional
+            todayLabel: '今日',  //Optional
+            closeLabel: '关闭',  //Optional
+            setLabel: '设置',  //Optional
+
+            weekDaysList: weekDaysList, //Optional
+            monthList: monthList, //Optional
+            callback: function (val) {  //Mandatory
+                endDate = val;
+                LoadQuestion();
+            },
+            dateFormat: 'yyyy-MM-dd', //Optional
+            closeOnSelect: false, //Optional
+        };
         $scope.goDetail = function ($index) {
+
+            $scope.questions[$index].unReadCommentNumber = 0;
+
+            $http.put(SERVER.url + '/questions', $scope.questions[$index]).success(function (data) {
+
+            }).error(function (reason) {
+                //
+                //
+            }).finally(function () {
+
+            });
             $state.go('app.commentDetail', {'params': $index});
         }
         //
         $scope.data = {search_string: ""};
         $scope.cancel = function () {
-            console.log("cancel");
             $scope.data.search_string = "";
-            $scope.doRefresh();
-
+            startDate = null;
+            endDate = null;
+            LoadQuestion();
         }
         $scope.search = function () {
             //
             $ionicLoading.show({content: '正在查找'});
-            $http.get(SERVER.url + '/questions/search', {params: {"search": $scope.data.search_string,modifyType:modifyType,doctor: $rootScope.user._id}}).success(function (data) {
+            $http.get(SERVER.url + '/questions/search', {
+                params: {
+                    "search": $scope.data.search_string,
+                    modifyType: 1,
+                    doctor: $rootScope.user._id
+                }
+            }).success(function (data) {
                 $scope.questions = data;
-                QuestionService.setData( $scope.questions);
+                QuestionService.setData($scope.questions);
 
             }).error(function (reason) {
                 //
@@ -695,28 +663,17 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             //
         }
         //
-        var modifyType=0;
-        $scope.selectCategory=function($index){
-            modifyType=$index;
-            if($scope.data.search_string !="")
-            $scope.search();
-            else
-            $scope.doRefresh();
-        }
-        //
+        var LoadQuestion = function () {
 
-
-        $scope.doRefresh = function () {
-
-            $http.get(SERVER.url + '/questions/doctor/v2', {
+            $http.get(SERVER.url + '/questions/doctor/modify', {
                 params: {
                     doctor: $rootScope.user._id,
-                    modifyType:modifyType
+                    startDate: startDate,
+                    endDate: endDate
                 }
             }).success(function (data) {
-                $scope.noMoreItemsAvailable=false;
                 $scope.questions = data;
-                QuestionService.setData( $scope.questions);
+                QuestionService.setData($scope.questions);
 
             }).error(function (reason) {
                 //
@@ -726,69 +683,118 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                 });
                 //
             }).finally(function () {
-                    $scope.$broadcast('scroll.refreshComplete');
 
                 }
             );
         }
+        $scope.$on('$ionicView.beforeEnter', function () {
+            LoadQuestion();
+        });
+        $scope.questions = [];
 
-        $scope.noMoreItemsAvailable = false;
+    })
+    .
+    controller('HistoryCtrl', function ($scope, $state, $rootScope, $http, $ionicLoading, $timeout, $ionicPopup, QuestionService, SERVER) {
+        //加载
 
-        $scope.questions =[];
-        //$scope.loadNewest = function(){
-        //    //
-        //    var maxAnswerTime = null;
-        //    if ($scope.questions.length != 0) {
-        //        maxAnswerTime = $scope.questions[0].answerTime;
-        //    }
-        //    $http.get(SERVER.url + '/questions/doctor', {
-        //        params: {
-        //            doctor: $rootScope.user._id,
-        //            maxAnswerTime: maxAnswerTime
-        //        }
-        //    }).success(function (data) {
-        //        if (data.length == 0) {
-        //            console.log("no more data");
-        //            $scope.noMoreItemsAvailable = true;
-        //        }
+        var weekDaysList = ['日', '一', '二', '三', '四', '五', '六'];
+        var monthList = ['一月', '二月', '三月', '四月', '五朋', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+        var startDate = null;
+        var endDate = null;
+        $scope.beginDatepickerObject = {
+            titleLabel: '选择时间',  //Optional
+            todayLabel: '今日',  //Optional
+            closeLabel: '关闭',  //Optional
+            setLabel: '设置',  //Optional
+
+            weekDaysList: weekDaysList, //Optional
+            monthList: monthList, //Optional
+            callback: function (val) {  //Mandatory
+                //
+                startDate = val;
+                LoadQuestion();
+                //
+            },
+            dateFormat: 'yyyy-MM-dd', //Optional
+            closeOnSelect: false, //Optional
+        };
+        $scope.endDatepickerObject = {
+            titleLabel: '选择时间',  //Optional
+            todayLabel: '今日',  //Optional
+            closeLabel: '关闭',  //Optional
+            setLabel: '设置',  //Optional
+
+            weekDaysList: weekDaysList, //Optional
+            monthList: monthList, //Optional
+            callback: function (val) {  //Mandatory
+                endDate = val;
+                LoadQuestion();
+            },
+            dateFormat: 'yyyy-MM-dd', //Optional
+            closeOnSelect: false, //Optional
+        };
+        $scope.goDetail = function ($index) {
+
+            $scope.questions[$index].unReadCommentNumber = 0;
+
+            $http.put(SERVER.url + '/questions', $scope.questions[$index]).success(function (data) {
+
+            }).error(function (reason) {
+                //
+                //
+            }).finally(function () {
+
+            });
+            $state.go('app.commentDetail', {'params': $index});
+        }
         //
-        //        $scope.questions = $scope.questions.unshift(data);
-        //        $scope.$apply();
-        //        QuestionService.setData($scope.questions);
-        //
-        //    }).error(function (reason) {
-        //        //
-        //        $ionicPopup.alert({
-        //            title: '错误',
-        //            template: error
-        //        });
-        //    }).finally(function () {
-        //        $scope.$broadcast('scroll.infiniteScrollComplete');
-        //    });
+        $scope.data = {search_string: ""};
+        $scope.cancel = function () {
+            $scope.data.search_string = "";
+            startDate = null;
+            endDate = null;
+            LoadQuestion();
+        }
+        $scope.search = function () {
             //
-        //}
-        $scope.loadMore = function () {
-
-            var minAnswerTime = null;
-            if ($scope.questions.length != 0) {
-                minAnswerTime = $scope.questions[$scope.questions.length - 1].answerTime;
-            }
-            $http.get(SERVER.url + '/questions/doctor/v2', {
+            $ionicLoading.show({content: '正在查找'});
+            $http.get(SERVER.url + '/questions/search', {
                 params: {
-                    doctor: $rootScope.user._id,
-                    minAnswerTime: minAnswerTime,
-                    modifyType:modifyType
+                    "search": $scope.data.search_string,
+                    modifyType: 0,
+                    doctor: $rootScope.user._id
                 }
             }).success(function (data) {
-                if (data.length == 0) {
-                    console.log("no more data");
-                    $scope.noMoreItemsAvailable = true;
+                $scope.questions = data;
+                QuestionService.setData($scope.questions);
 
-                }else {
-                    $scope.questions = $scope.questions.concat(data);
+            }).error(function (reason) {
+                //
+                $ionicPopup.alert({
+                    title: '错误',
+                    template: reason
+                });
+                //
+            }).finally(function () {
+                // Stop the ion-refresher from spinning
+                $ionicLoading.hide();
 
-                    QuestionService.setData($scope.questions);
+            });
+            //
+        }
+        //
+        var LoadQuestion = function () {
+
+            $http.get(SERVER.url + '/questions/doctor/accept', {
+                params: {
+                    doctor: $rootScope.user._id,
+                    modifyType: 0,
+                    startDate: startDate,
+                    endDate: endDate
                 }
+            }).success(function (data) {
+                $scope.questions = data;
+                QuestionService.setData($scope.questions);
 
             }).error(function (reason) {
                 //
@@ -796,30 +802,29 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                     title: '错误',
                     template: error
                 });
+                //
             }).finally(function () {
-                $scope.$broadcast('scroll.infiniteScrollComplete');
-            });
+
+                }
+            );
         }
-        $scope.$on('$ionicView.enter', function () {
+        $scope.$on('$ionicView.beforeEnter', function () {
+            LoadQuestion();
+        });
+        $scope.questions = [];
 
-            $scope.doRefresh();
-
-            //$scope.loadNewest();
-            //QuestionService.setData($scope.questions);
-            // do what you want to do
-        })
     })
-    .controller('CategoryCtrl', function ($scope, $ionicScrollDelegate,$ionicHistory, $rootScope, $http, $state, SERVER) {
+    .controller('CategoryCtrl', function ($scope, $ionicScrollDelegate, $ionicHistory, $rootScope, $http, $state, SERVER) {
         //
         //$rootScope.user.selected["外科"][0]=false;
         //k=2;
-        $scope.ok = function(){
+        $scope.ok = function () {
             $ionicHistory.nextViewOptions({
                 disableBack: true
             });
             $state.go('app.browse')
         }
-        $scope.toggleGroup = function(group) {
+        $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
                 $scope.shownGroup = null;
             } else {
@@ -827,12 +832,12 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             }
             $ionicScrollDelegate.resize();
         };
-        $scope.isGroupShown = function(group) {
+        $scope.isGroupShown = function (group) {
             return $scope.shownGroup === group;
         };
         $scope.selected = new Array();
         $scope.$on('$ionicView.beforeEnter', function () {
-            console.log("cate:"+$rootScope.category);
+            console.log("cate:" + $rootScope.category);
             $rootScope.category.forEach(function (e, i, a) {
                 $scope.selected[e.name] = new Array();
                 $scope.selected[e.name][e.child_depart.length] = 'NO';
@@ -848,7 +853,6 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
                 });
             });
         });
-
         $scope.$on('$ionicView.beforeLeave', function () {
             //
             $rootScope.user.selected = [];
@@ -884,21 +888,21 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
 
     })
     //首页
-    .controller('QuestionDetailCtrl', function ($scope,$stateParams,$ionicLoading,SERVER,$http,QuestionService) {
+    .controller('QuestionDetailCtrl', function ($scope, $stateParams, $ionicLoading, SERVER, $http, QuestionService) {
         //
 
         var index = angular.fromJson($stateParams.params);
         $scope.question = QuestionService.getQuestionByIndex(index);
         //
-        var editor=null;
-        $scope.myfocuse=function(){
+        var editor = null;
+        $scope.myfocuse = function () {
             //setTimeout(function() { editor.focus(); }, 2000);
             editor.focus(true);
         }
-        ionic.DomUtil.ready(function() {
+        ionic.DomUtil.ready(function () {
             editor = new wysihtml5.Editor('editor', {
-                supportTouchDevices:  true,
-                parserRules:  wysihtml5ParserRulesDefaults
+                supportTouchDevices: true,
+                parserRules: wysihtml5ParserRulesDefaults
             });
 
             //editor.composer.element.ownerDocument.addEventListener("touchstart", function() {
@@ -922,10 +926,11 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             //editor.focus();
             // do what you want to do
         })
-        $scope.modify = function(){
+        $scope.modify = function () {
             $ionicLoading.show();
             $scope.question.answer = editor.getValue();
-            $scope.question.numberOfModify =  $scope.question.numberOfModify+1;
+            $scope.question.numberOfModify = $scope.question.numberOfModify==null?1:$scope.question.numberOfModify + 1;
+            $scope.question.modifyTime = Date.now();
             $http.put(SERVER.url + '/questions', $scope.question).success(function (data) {
 
             }).error(function (reason) {
@@ -969,14 +974,13 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
         }
         $scope.register = function () {
 
-            if($scope.data.trueName == "" ||
-                 $scope.data.name =="" || $scope.data.password == "" || $scope.data.vcode=="" )
-            {
+            if ($scope.data.trueName == "" ||
+                $scope.data.name == "" || $scope.data.password == "" || $scope.data.vcode == "") {
                 $ionicPopup.alert({
                     title: '错误',
                     template: '请输入完整的数据'
                 });
-                return ;
+                return;
             }
             //
             //
@@ -1034,10 +1038,10 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
     })
     .controller('PersonalCtrl', function ($scope, $rootScope, $state, $http, $ionicHistory, $ionicLoading, $localstorage, SERVER, $cordovaFile, $cordovaFileTransfer) {
         //
-        if(ionic.Platform.isWebView == false)
+        if (ionic.Platform.isWebView == false)
             $rootScope.userImageUrl = cordova.file.dataDirectory + $rootScope.user.image;
         else
-            $rootScope.userImageUrl = "/images/"+$rootScope.user.image;
+            $rootScope.userImageUrl = "/images/" + $rootScope.user.image;
         $scope.logout = function () {
             //
             $rootScope.user = null;
@@ -1120,9 +1124,11 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
         }
         var myupdate = function () {
             //
-            $http.get(SERVER.url + '/questions/statics', {params:{docotor:$rootScope.user._id}}).success(function (data) {
+            $http.get(SERVER.url + '/questions/statics', {params: {doctor: $rootScope.user._id}}).success(function (data) {
                 $rootScope.user.questionCount = data.questionCount;
                 $rootScope.user.commentCount = data.commentCount;
+                $rootScope.user.monthQuesetionCount = data.monthQuesetionCount;
+                $rootScope.user.monthCommentCount = data.monthCommentCount;
 
             }).error(function (reason) {
                 //
@@ -1134,17 +1140,17 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             });
         }
         $scope.$on('$ionicView.enter', function () {
-           myupdate();
+            myupdate();
         })
     })
-    .controller('MyCommentCtrl',function($scope, $state, $rootScope, $http, $ionicLoading, $timeout, $ionicPopup, QuestionService, SERVER){
+    .controller('MyCommentCtrl', function ($scope, $state, $rootScope, $http, $ionicLoading, $timeout, $ionicPopup, QuestionService, SERVER) {
         //
         $scope.goDetail = function ($index) {
             $state.go('app.commentDetail', {'params': $index});
         }
         //
 
-        $scope.questions=[];
+        $scope.questions = [];
         //
         $scope.doRefresh = function () {
 
@@ -1155,7 +1161,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ngCordova','ti-segmented-
             }).success(function (data) {
                 $scope.questions = data;
                 $scope.noMoreItemsAvailable = false;
-                QuestionService.setData( $scope.questions);
+                QuestionService.setData($scope.questions);
 
             }).error(function (reason) {
                 //
