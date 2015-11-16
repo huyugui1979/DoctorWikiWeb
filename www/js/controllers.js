@@ -1124,7 +1124,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ionic-datepicker', 'ngCor
         }
         var myupdate = function () {
             //
-            $http.get(SERVER.url + '/questions/statics', {params: {doctor: $rootScope.user._id}}).success(function (data) {
+            $http.get(SERVER.url + '/questions/statics', {params: {docotor: $rootScope.user._id}}).success(function (data) {
                 $rootScope.user.questionCount = data.questionCount;
                 $rootScope.user.commentCount = data.commentCount;
                 $rootScope.user.monthQuesetionCount = data.monthQuesetionCount;
