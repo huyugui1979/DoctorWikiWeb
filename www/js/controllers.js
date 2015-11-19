@@ -15,6 +15,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ionic-datepicker', 'ngCor
 
     .controller('AppCtrl', function ($scope, $http, $rootScope, $ionicLoading, $ionicPopup, SERVER) {
         //
+
         $http.get(SERVER.url + '/category').success(function (data) {
             $rootScope.category = data;
         }).error(function (reason) {
@@ -899,10 +900,12 @@ angular.module('starter.controllers', ['ionic.utils', 'ionic-datepicker', 'ngCor
             //setTimeout(function() { editor.focus(); }, 2000);
             editor.focus(true);
         }
+
         ionic.DomUtil.ready(function () {
             editor = new wysihtml5.Editor('editor', {
                 supportTouchDevices: true,
-                parserRules: wysihtml5ParserRulesDefaults
+                parserRules: wysihtml5ParserRulesDefaults,
+                contentEditableMode:true
             });
 
             //editor.composer.element.ownerDocument.addEventListener("touchstart", function() {
@@ -911,8 +914,9 @@ angular.module('starter.controllers', ['ionic.utils', 'ionic-datepicker', 'ngCor
             //        editor.composer.iframe.focus();
             //    }, 500); // do not use 0, window will get blur in a short time after touchstart.
             //});
-            editor.setValue($scope.question.answer);
 
+            editor.setValue($scope.question.answer);
+            editor.editableElement.clientHeight=1000;;
 
         });
         $scope.$on('$ionicView.enter', function () {
