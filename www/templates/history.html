@@ -1,49 +1,51 @@
 <ion-view view-title="我的末修改问题">
-    <ion-content >
-        <div class=" bar bar-header item-input-inset" class="row">
-            <div class="col col-60">
+    <ion-content  >
+        <div class=" bar bar-header item-input-inset" style="margin: auto;" >
+            <div  style="width: 75%;margin-left: 2px;">
                 <label class="item-input-wrapper">
                     <i class="icon ion-ios-search placeholder-icon"></i>
                     <input type="search" placeholder="查找" ng-enter="search()" ng-model="data.search_string">
 
                 </label>
             </div>
-            <div class="col col-15">
+            <div style="width: 10%;margin-left: 2px;">
                 <ionic-datepicker input-obj="beginDatepickerObject">
                     <button class="button button-block button-positive">起始时间</button>
                 </ionic-datepicker>
             </div>
-            <div class="col col-15">
+            <div style="width: 10%;margin-left: 2px;">
                 <ionic-datepicker input-obj="endDatepickerObject">
                     <button class="button button-block button-positive">结束时间</button>
                 </ionic-datepicker>
             </div>
-            <div class="col col-10">
+            <div style="width: 5%;margin-left: 2px;">
             <button ng-click="cancel()" class="button button-block button-positive">刷新</button>
             </div>
         </div>
         <h1 ng-if="questions.length == 0" style="color:#636363">您还未认领问题，赶紧去认领问题吧</h1>
-        <div class="list" ng-repeat="question in questions">
+        <div class="list" ng-repeat="question in questions" >
 
-            <a class="item item-avatar item-text-wrap"  ng-style="{'background-color':$index%2==0?'white':'#f3f3f3'}" style="margin-bottom:-30px;">
+            <div class="item item-avatar  item-text-wrap" data-tap-disabled="true"
+                 style="margin-bottom:-30px; -webkit-user-select: auto"
+                 ng-style="{'background-color':$index%2==0?'white':'#f3f3f3'}">
 
                 <img ng-src="{{SERVER.url+'/images/'+question.doctor.image}}">
 
-                <div class="row" ng-click="goDetail($index)" >
+                <div class="row"  >
                     <div class="col col-90 ">
-                        <h2 id="{{'question'+$index}}">{{question.question}}</h2>
+                        <h2 id="{{'question'+$index}}" class="selectable">{{question.question}}</h2>
 
                         <p>修改时间:{{ question.answerTime | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</p>
 
                         <p>收藏次数:{{question.collectionNumber}} 评论次数:{{question.comments.length}}</p>
 
                     </div>
-                    <div class="col col-center "  >
+                    <div class="col col-center " ng-click="goDetail($index)" >
                        <i class=" text-center ion-ios-arrow-right" ></i>
                     </div>
                 </div>
                 <span ng-show="question.unReadCommentNumber==null || question.unReadCommentNumber>0" class="badge badge-assertive">{{question.unReadCommentNumber}}</span>
-            </a>
+            </div>
         </div>
     </ion-content>
 </ion-view>

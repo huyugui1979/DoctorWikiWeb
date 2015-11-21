@@ -904,7 +904,7 @@ angular.module('starter.controllers', ['ionic.utils', 'ionic-datepicker', 'ngCor
         ionic.DomUtil.ready(function () {
             editor = new wysihtml5.Editor('editor', {
                 supportTouchDevices: true,
-                parserRules: wysihtml5ParserRulesDefaults,
+              //  parserRules: wysihtml5ParserRulesDefaults,
                 contentEditableMode:true
             });
 
@@ -916,7 +916,6 @@ angular.module('starter.controllers', ['ionic.utils', 'ionic-datepicker', 'ngCor
             //});
 
             editor.setValue($scope.question.answer);
-            editor.editableElement.clientHeight=1000;;
 
         });
         $scope.$on('$ionicView.enter', function () {

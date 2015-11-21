@@ -2,26 +2,24 @@
 
     <ion-content style="overflow-scroll:true ">
 
-
-        <div class=" bar bar-header item-input-inset" class="row">
-            <div class="col col60">
+        <div class=" bar bar-header item-input-inset" >
+            <div style="width: 75%;margin-left: 2px;">
                 <label class="item-input-wrapper">
                     <i class="icon ion-ios-search placeholder-icon"></i>
                     <input type="search" placeholder="查找" ng-enter="search()" ng-model="data.search_string">
-
                 </label>
             </div>
-            <div class="col col-15">
+            <div style="width: 10%;margin-left: 2px;">
                 <ionic-datepicker input-obj="beginDatepickerObject">
-                    <button class="button button-block button-positive">起始时间</button>
+                    <button class="button button-block button-positive">修改起始时间</button>
                 </ionic-datepicker>
             </div>
-            <div class="col col-15">
+            <div style="width: 10%;margin-left: 2px;">
                 <ionic-datepicker input-obj="endDatepickerObject">
-                    <button class="button button-block button-positive">结束时间</button>
+                    <button class="button button-block button-positive">修改结束时间</button>
                 </ionic-datepicker>
             </div>
-            <div class="col col-10">
+            <div style="width: 5%;margin-left: 2px;">
                 <button ng-click="cancel()" class="button button-block button-positive">刷新</button>
             </div>
         </div>
