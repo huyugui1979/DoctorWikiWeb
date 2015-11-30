@@ -6,7 +6,7 @@
 var app = angular.module('starter', ['ionic', 'ionic.utils','angularMoment','starter.controllers'])
     .constant('SERVER', {
         // Local server
-        url: 'http://113.31.89.204:3030'
+        url: 'http://113.31.89.205:3030'
         // Public Heroku server
         //url: 'https://ionic-songhop.herokuapp.com'
     })
